@@ -1,0 +1,15 @@
+地表水資料收集 - 109年度1726條土石流潛勢溪流集水區圖.csv
+	政府開放資料
+地表水資料收集 - wikidata-canal.csv
+	從 wikidata query 出來的資料
+地表水資料收集 - wikidata-river.csv
+	從 wikidata query 出來的資料
+地表水資料收集 - 河川基本資料.csv
+	從 政府開放資料 河川代碼 中處理後，帶入水利署網站上的相關資料
+地表水資料收集 - 農田水利會圳路.csv
+	LASS 自建， 版權 CC0
+地表水資料收集 - 縣市管野溪（不含河川與排水）.csv
+	LASS 自建， 版權 CC0
+地表水資料收集 - 排水-全部.csv
+	來源為 區域排水整合型查詢系統，可能為政府開放資料版權 
+		https://rdi-123.wrap.gov.tw/integration_wrpi_drainage/opendataDrainage.html

@@ -1,0 +1,8 @@
+enabled,level,src_id,ds_name,tag,filename,col_id,col_name,col_key,id_type,id_par
+1,1,DATAGOV-22228,river_code,溪河,dataset/地表水資料收集 - 河川基本資料.csv,河川代碼,河川名稱,河川代碼,river_code,%04i%02i
+1,2,ORG-1,排水,人工河,dataset/地表水資料收集 - 排水-全部.csv,P_ID,Drain_Name,"P_ID,geo_id,ex_hydroid",seq,%i
+1,3.1,LASS-1,local_gov,溪河,dataset/地表水資料收集 - 縣市管野溪（不含河川與排水）.csv,river_code,river_name,"countyname,river_name",seq,
+1,3.2,DATAGOV-118834,debris,溪河,dataset/地表水資料收集 - 109年度1726條土石流潛勢溪流集水區圖.csv,Debrisno,Debrisno,Debrisno,debrisno,%02sDF%03i
+1,3.3,WIKIDATA-1,wd_river,溪河,dataset/地表水資料收集 - wikidata-river.csv,item,itemLabel,item,wikidata,Q%i
+1,4.1,ORG-2,農田水利會圳路,人工河,dataset/地表水資料收集 - 農田水利會圳路.csv,cid,name,"org_id,name",seq,
+1,4.2,WIKIDATA-2,wd_canal,人工河,dataset/地表水資料收集 - wikidata-canal.csv,item,itemLabel,item,wikidata,Q%i

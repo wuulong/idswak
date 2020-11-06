@@ -6,3 +6,5 @@ enabled,level,src_id,ds_name,tag,filename,col_id,col_name,col_key,id_type,id_par
 1,3.3,WIKIDATA-1,wd_river,溪河,dataset/地表水資料收集 - wikidata-river.csv,item,itemLabel,item,wikidata,Q%i
 1,4.1,ORG-2,農田水利會圳路,人工河,dataset/地表水資料收集 - 農田水利會圳路.csv,cid,name,"org_id,name",seq,
 1,4.2,WIKIDATA-2,wd_canal,人工河,dataset/地表水資料收集 - wikidata-canal.csv,item,itemLabel,item,wikidata,Q%i
+0,10,LASS-2,fusion,設定,dataset/id_act_fusion.csv,fid_master,name,fid_master,set,
+0,3.4,OSM-waterway,waterway,水路,dataset/地表水資料收集 - OSM_waterway.csv,id,name,id,osm,

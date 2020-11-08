@@ -73,7 +73,8 @@ class IdSwak():
             self.cfg[row['ds_name']] = row
         
         if not os.path.isfile(FILE_IDACTFUSION):
-            self.df_fusion = pd.read_csv(FILE_IDACTFUSION_SRC)
+            if os.path.isfile(FILE_IDACTFUSION_SRC):
+                self.df_fusion = pd.read_csv(FILE_IDACTFUSION_SRC)
         else:     
             self.df_fusion = pd.read_csv(FILE_IDACTFUSION)
         self.load_fusion()
@@ -181,8 +182,9 @@ class IdSwak():
         """
             load fusion confirm status from file.
         """
-        for idx, row in self.df_fusion.iterrows():
-            self.fusion_add_pair(True,row['fid_master'],row['name']  , row['fid_link'], row['guess_link'])
+        if self.df_fusion is not None:
+            for idx, row in self.df_fusion.iterrows():
+                self.fusion_add_pair(True,row['fid_master'],row['name']  , row['fid_link'], row['guess_link'])
     def init_fusion(self): #need to run after df load
         """
             update fusion status from data

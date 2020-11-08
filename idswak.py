@@ -69,8 +69,8 @@ class IdSwak():
         """
         self.df_cfg = pd.read_csv(FILE_IDACTCFG)
         for idx, row in self.df_cfg.iterrows():
-            if row['enabled']==1:
-                self.cfg[row['ds_name']] = row
+            #if row['enabled']==1:
+            self.cfg[row['ds_name']] = row
         
         if not os.path.isfile(FILE_IDACTFUSION):
             self.df_fusion = pd.read_csv(FILE_IDACTFUSION_SRC)
@@ -78,7 +78,8 @@ class IdSwak():
             self.df_fusion = pd.read_csv(FILE_IDACTFUSION)
         self.load_fusion()
     def load_ds(self,ds_name):
-        filename = get_value_by_index(self.df_cfg, "ds_name=%s" %(ds_name), "filename")
+        #filename = get_value_by_index(self.df_cfg, "ds_name=%s" %(ds_name), "filename")
+        filename = self.cfg[ds_name]['filename']
         df = pd.read_csv(filename)
         if self.cfg[ds_name]['id_type']=="wikidata":
             df['item'] = df['item'].str.replace('http://www.wikidata.org/entity/','')
@@ -92,7 +93,8 @@ class IdSwak():
         if len(self.dfs)>0: #already load
             return 
         for ds_name in self.cfg.keys():
-            self.dfs[ds_name]= self.load_ds(ds_name)
+            if self.cfg[ds_name]['enabled']==1:
+                self.dfs[ds_name]= self.load_ds(ds_name)
     def get_dsname_by_src(self,src_id):
         for cfg in self.cfg.keys():
             if self.cfg[cfg]['src_id']==src_id:
@@ -187,17 +189,18 @@ class IdSwak():
         """
         #df should already loaded
         for ds_name in self.cfg.keys():
-            col_id = self.cfg[ds_name]['col_id']
-            src_id = self.cfg[ds_name]['src_id']
-            col_name = self.cfg[ds_name]['col_name']
-            id_type = self.cfg[ds_name]['id_type']
-            df = self.dfs[ds_name]
-            for idx, row in df.iterrows():
-                col2_id = row[col_id]
-                #if id_type=='wikidata':
-                #    col2_id=self.wd_url_to_wid(row[col_id])
-                fid = "%s@%s" %(src_id, col2_id)
-                self.fusion_add_pair(False,fid, row[col_name])
+            if self.cfg[ds_name]['enabled']==1:
+                col_id = self.cfg[ds_name]['col_id']
+                src_id = self.cfg[ds_name]['src_id']
+                col_name = self.cfg[ds_name]['col_name']
+                id_type = self.cfg[ds_name]['id_type']
+                df = self.dfs[ds_name]
+                for idx, row in df.iterrows():
+                    col2_id = row[col_id]
+                    #if id_type=='wikidata':
+                    #    col2_id=self.wd_url_to_wid(row[col_id])
+                    fid = "%s@%s" %(src_id, col2_id)
+                    self.fusion_add_pair(False,fid, row[col_name])
     def output_fusion(self):
         """
             save current fusion to file
@@ -214,7 +217,8 @@ class IdSwak():
             
             for fid  in self.fids.keys():
                 #print("%s" %(self.fids[fid]))
-                outfile.write(",".join(self.fids[fid]))
+                fid_strlist = map(str,self.fids[fid])
+                outfile.write(",".join(fid_strlist))
                 outfile.write("\n")
     
     def fusion_act(self,act_cmd):
@@ -234,8 +238,11 @@ class IdSwak():
                 else:
                     src_cnt[src_id]=1
             print("src_id counter:")
+            src_info=[]
             for src_id in src_cnt:
-                print("%s,%i" %(src_id,src_cnt[src_id]))
+                src_info.append([src_id,src_cnt[src_id]])
+                #print("%s,%i" %(src_id,src_cnt[src_id]))
+            return pd.DataFrame(src_info)
         if act_cmd=="content": #update content csv to self.fids, colname without src_id
             for fid_master  in self.fids.keys(): #per fusion record
                 #print("fid_master=%s" %(fid_master))
@@ -261,22 +268,25 @@ class IdSwak():
                     src_id = cols[0]
                     id = cols[1]
                     ds_name = self.get_dsname_by_src(src_id)
-                    col_id = self.cfg[ds_name]['col_id']
-                    df = self.dfs[ds_name]
-                    #print("col_id=%s,id=%s" %(col_id,id))
-                    try:
-                        if pd.api.types.is_integer_dtype(df.dtypes[col_id]):
-                            id= int(id)
-                        df_row = df[df[col_id]==id]
-                        for idx, row in df_row.iterrows():
-                            for col_name in df.columns:
-                                if col_name=='Unnamed: 0':
-                                    pass
-                                else:
-                                    col_str = "%s=%s" %(col_name, row[col_name])
-                                    col_strs.append(col_str)
-                    except:
-                        print("exception! fid_master=%s, fid_link=%s, guess_link=%s, col_id=%s" %(fid_master,fid_link,guess_link,col_id))
+                    if ds_name=='':
+                        print("ds_name empty, src_id=%s" %(src_id))
+                    else:
+                        col_id = self.cfg[ds_name]['col_id']
+                        df = self.dfs[ds_name]
+                        #print("col_id=%s,id=%s" %(col_id,id))
+                        try:
+                            if pd.api.types.is_integer_dtype(df.dtypes[col_id]):
+                                id= int(id)
+                            df_row = df[df[col_id]==id]
+                            for idx, row in df_row.iterrows():
+                                for col_name in df.columns:
+                                    if col_name=='Unnamed: 0':
+                                        pass
+                                    else:
+                                        col_str = "%s=%s" %(col_name, row[col_name])
+                                        col_strs.append(col_str)
+                        except:
+                            print("exception! fid_master=%s, fid_link=%s, guess_link=%s, col_id=%s" %(fid_master,fid_link,guess_link,col_id))
                 record[4] = "\"%s\"" %( "|".join(col_strs))
                 #print("content=%s" %(record[4]))
                 self.fids[fid_master] = record
